@@ -1,3 +1,0 @@
-"0","leso_total |> "
-"0","  slice_sample(n = 10) |>"
-"0","  select(agency_name, quantity, acquisition_value, total_value)"
