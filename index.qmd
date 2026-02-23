@@ -13,3 +13,7 @@ The Austin Police Department alone received about $2.5 million in controlled equ
 Smaller nearby agencies have also received significant transfers. The San Marcos Police Department, which serves a population of about 63,000, received nearly $3.2 million in military equipment, showing how even mid-size departments can obtain large amounts of federal surplus.
 
 Across Texas, law enforcement agencies have received 18,677 controlled items since 2010, reflecting the continued flow of military resources into local policing at both large and small departments.
+
+## Site link
+
+Quarto website can be found [here](https://uswasaeed.github.io/military-surplus/).
