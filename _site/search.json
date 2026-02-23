@@ -1,0 +1,122 @@
+[
+  {
+    "objectID": "01-cleaning.html",
+    "href": "01-cleaning.html",
+    "title": "Cleaning",
+    "section": "",
+    "text": "Download the data\nImport the data\nCheck datatypes\nCreate a total_value variable\nCreate a control_type variable\nFilter the date range (since Jan. 1 2010)\nExport the cleaned data",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#notebook-goals",
+    "href": "01-cleaning.html#notebook-goals",
+    "title": "Cleaning",
+    "section": "",
+    "text": "Download the data\nImport the data\nCheck datatypes\nCreate a total_value variable\nCreate a control_type variable\nFilter the date range (since Jan. 1 2010)\nExport the cleaned data",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#setup",
+    "href": "01-cleaning.html#setup",
+    "title": "Cleaning",
+    "section": "Setup",
+    "text": "Setup\nSetting up and adding our libraries.\n\nlibrary(tidyverse)",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#downloading-the-data",
+    "href": "01-cleaning.html#downloading-the-data",
+    "title": "Cleaning",
+    "section": "Downloading the data",
+    "text": "Downloading the data\nWhile the data we will use here if from Prof. McDonald, it is from the Law Enforcement Support Office. Find more information about the program here.\n\ndownload.file(\n  \"https://github.com/utdata/rwd-r-leso/blob/main/data-processed/leso.csv?raw=true\",\n  \"data-original/leso.csv\",\n  mode = \"wb\"\n)",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#import",
+    "href": "01-cleaning.html#import",
+    "title": "Cleaning",
+    "section": "Import",
+    "text": "Import\nImporting the data into our project.\n\nleso_raw &lt;- read_csv(\"data-original/leso.csv\")\n\nRows: 79761 Columns: 12\n── Column specification ────────────────────────────────────────────────────────\nDelimiter: \",\"\nchr  (7): state, agency_name, nsn, item_name, ui, demil_code, station_type\ndbl  (4): sheet, quantity, acquisition_value, demil_ic\ndttm (1): ship_date\n\nℹ Use `spec()` to retrieve the full column specification for this data.\nℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\nleso_raw\n\n\n  \n\n\n\n\nleso_raw |&gt; glimpse()\n\nRows: 79,761\nColumns: 12\n$ sheet             &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n$ state             &lt;chr&gt; \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\"…\n$ agency_name       &lt;chr&gt; \"ABBEVILLE POLICE DEPT\", \"ABBEVILLE POLICE DEPT\", \"A…\n$ nsn               &lt;chr&gt; \"1240-01-411-1265\", \"2540-01-565-4700\", \"1005-01-587…\n$ item_name         &lt;chr&gt; \"SIGHT,REFLEX\", \"BALLISTIC BLANKET KIT\", \"MOUNT,RIFL…\n$ quantity          &lt;dbl&gt; 9, 10, 10, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 6, 1, 1, 1,…\n$ ui                &lt;chr&gt; \"Each\", \"Kit\", \"Each\", \"Each\", \"Each\", \"Each\", \"Each…\n$ acquisition_value &lt;dbl&gt; 339.00, 16568.15, 1626.00, 10000.00, 62627.00, 65800…\n$ demil_code        &lt;chr&gt; \"Q\", \"D\", \"D\", \"Q\", \"C\", \"C\", \"C\", \"D\", \"Q\", \"Q\", \"D…\n$ demil_ic          &lt;dbl&gt; 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 3, 1, 1, 1, 3…\n$ ship_date         &lt;dttm&gt; 2016-09-14, 2018-01-30, 2016-09-19, 2017-03-28, 201…\n$ station_type      &lt;chr&gt; \"State\", \"State\", \"State\", \"State\", \"State\", \"State\"…",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#cleaning-and-changing-columns",
+    "href": "01-cleaning.html#cleaning-and-changing-columns",
+    "title": "Cleaning",
+    "section": "Cleaning and changing columns",
+    "text": "Cleaning and changing columns\nRemoving the sheet column and adding a total_value column.\n\nleso_tight &lt;- leso_raw |&gt;\n  select(!sheet)\n\nleso_tight |&gt; glimpse()\n\nRows: 79,761\nColumns: 11\n$ state             &lt;chr&gt; \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\"…\n$ agency_name       &lt;chr&gt; \"ABBEVILLE POLICE DEPT\", \"ABBEVILLE POLICE DEPT\", \"A…\n$ nsn               &lt;chr&gt; \"1240-01-411-1265\", \"2540-01-565-4700\", \"1005-01-587…\n$ item_name         &lt;chr&gt; \"SIGHT,REFLEX\", \"BALLISTIC BLANKET KIT\", \"MOUNT,RIFL…\n$ quantity          &lt;dbl&gt; 9, 10, 10, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 6, 1, 1, 1,…\n$ ui                &lt;chr&gt; \"Each\", \"Kit\", \"Each\", \"Each\", \"Each\", \"Each\", \"Each…\n$ acquisition_value &lt;dbl&gt; 339.00, 16568.15, 1626.00, 10000.00, 62627.00, 65800…\n$ demil_code        &lt;chr&gt; \"Q\", \"D\", \"D\", \"Q\", \"C\", \"C\", \"C\", \"D\", \"Q\", \"Q\", \"D…\n$ demil_ic          &lt;dbl&gt; 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 3, 1, 1, 1, 3…\n$ ship_date         &lt;dttm&gt; 2016-09-14, 2018-01-30, 2016-09-19, 2017-03-28, 201…\n$ station_type      &lt;chr&gt; \"State\", \"State\", \"State\", \"State\", \"State\", \"State\"…\n\n\n\nleso_total &lt;- leso_tight |&gt;\n  mutate(total_value = quantity * acquisition_value)\n\nleso_total |&gt; glimpse()\n\nRows: 79,761\nColumns: 12\n$ state             &lt;chr&gt; \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\"…\n$ agency_name       &lt;chr&gt; \"ABBEVILLE POLICE DEPT\", \"ABBEVILLE POLICE DEPT\", \"A…\n$ nsn               &lt;chr&gt; \"1240-01-411-1265\", \"2540-01-565-4700\", \"1005-01-587…\n$ item_name         &lt;chr&gt; \"SIGHT,REFLEX\", \"BALLISTIC BLANKET KIT\", \"MOUNT,RIFL…\n$ quantity          &lt;dbl&gt; 9, 10, 10, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 6, 1, 1, 1,…\n$ ui                &lt;chr&gt; \"Each\", \"Kit\", \"Each\", \"Each\", \"Each\", \"Each\", \"Each…\n$ acquisition_value &lt;dbl&gt; 339.00, 16568.15, 1626.00, 10000.00, 62627.00, 65800…\n$ demil_code        &lt;chr&gt; \"Q\", \"D\", \"D\", \"Q\", \"C\", \"C\", \"C\", \"D\", \"Q\", \"Q\", \"D…\n$ demil_ic          &lt;dbl&gt; 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 3, 1, 1, 1, 3…\n$ ship_date         &lt;dttm&gt; 2016-09-14, 2018-01-30, 2016-09-19, 2017-03-28, 201…\n$ station_type      &lt;chr&gt; \"State\", \"State\", \"State\", \"State\", \"State\", \"State\"…\n$ total_value       &lt;dbl&gt; 3051.00, 165681.50, 16260.00, 10000.00, 62627.00, 65…\n\n\nChecking if it works.\n\nleso_total |&gt; \n  slice_sample(n = 10) |&gt;\n  select(agency_name, quantity, acquisition_value, total_value)",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#controlled-data",
+    "href": "01-cleaning.html#controlled-data",
+    "title": "Cleaning",
+    "section": "Controlled data",
+    "text": "Controlled data\nCategorizing the controlled data.\n\nleso_control &lt;- leso_total |&gt; \n  mutate(\n    control_type = case_when(\n      str_detect(item_name, \"AIRPLANE\") ~ TRUE,\n      (demil_code == \"A\" | (demil_code == \"Q\" & demil_ic == 6)) ~ FALSE,\n      .default = TRUE\n    )\n  )\n\nleso_control |&gt; glimpse()\n\nRows: 79,761\nColumns: 13\n$ state             &lt;chr&gt; \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\", \"AL\"…\n$ agency_name       &lt;chr&gt; \"ABBEVILLE POLICE DEPT\", \"ABBEVILLE POLICE DEPT\", \"A…\n$ nsn               &lt;chr&gt; \"1240-01-411-1265\", \"2540-01-565-4700\", \"1005-01-587…\n$ item_name         &lt;chr&gt; \"SIGHT,REFLEX\", \"BALLISTIC BLANKET KIT\", \"MOUNT,RIFL…\n$ quantity          &lt;dbl&gt; 9, 10, 10, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 6, 1, 1, 1,…\n$ ui                &lt;chr&gt; \"Each\", \"Kit\", \"Each\", \"Each\", \"Each\", \"Each\", \"Each…\n$ acquisition_value &lt;dbl&gt; 339.00, 16568.15, 1626.00, 10000.00, 62627.00, 65800…\n$ demil_code        &lt;chr&gt; \"Q\", \"D\", \"D\", \"Q\", \"C\", \"C\", \"C\", \"D\", \"Q\", \"Q\", \"D…\n$ demil_ic          &lt;dbl&gt; 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 3, 1, 1, 1, 3…\n$ ship_date         &lt;dttm&gt; 2016-09-14, 2018-01-30, 2016-09-19, 2017-03-28, 201…\n$ station_type      &lt;chr&gt; \"State\", \"State\", \"State\", \"State\", \"State\", \"State\"…\n$ total_value       &lt;dbl&gt; 3051.00, 165681.50, 16260.00, 10000.00, 62627.00, 65…\n$ control_type      &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE…",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#date-filter",
+    "href": "01-cleaning.html#date-filter",
+    "title": "Cleaning",
+    "section": "Date filter",
+    "text": "Date filter\nFiltering data to show dates past 2010.\n\nleso_dated &lt;- leso_control |&gt; \n  filter(\n    ship_date &gt;= \"2010-01-01\"\n  )\n\nleso_dated |&gt; summary()\n\n    state           agency_name            nsn             item_name        \n Length:54838       Length:54838       Length:54838       Length:54838      \n Class :character   Class :character   Class :character   Class :character  \n Mode  :character   Mode  :character   Mode  :character   Mode  :character  \n                                                                            \n                                                                            \n                                                                            \n                                                                            \n    quantity             ui            acquisition_value   demil_code       \n Min.   :   1.000   Length:54838       Min.   :       0   Length:54838      \n 1st Qu.:   1.000   Class :character   1st Qu.:     339   Class :character  \n Median :   1.000   Mode  :character   Median :     499   Mode  :character  \n Mean   :   3.479                      Mean   :   25717                     \n 3rd Qu.:   1.000                      3rd Qu.:    3607                     \n Max.   :1600.000                      Max.   :22000000                     \n                                                                            \n    demil_ic      ship_date                   station_type      \n Min.   :0.00   Min.   :2010-01-06 00:00:00   Length:54838      \n 1st Qu.:1.00   1st Qu.:2012-02-28 00:00:00   Class :character  \n Median :1.00   Median :2014-07-15 00:00:00   Mode  :character  \n Mean   :1.73   Mean   :2015-05-28 10:48:21                     \n 3rd Qu.:3.00   3rd Qu.:2017-10-04 00:00:00                     \n Max.   :7.00   Max.   :2026-12-31 00:00:00                     \n NA's   :3239                                                   \n  total_value       control_type   \n Min.   :       0   Mode :logical  \n 1st Qu.:     339   FALSE:809      \n Median :     749   TRUE :54029    \n Mean   :   27165                  \n 3rd Qu.:    6800                  \n Max.   :22000000",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "01-cleaning.html#export",
+    "href": "01-cleaning.html#export",
+    "title": "Cleaning",
+    "section": "Export",
+    "text": "Export\nExporting our cleaned and filtered data.\n\nleso_dated |&gt; write_rds(\"data-processed/01-leso-clean.rds\")",
+    "crumbs": [
+      "Cleaning"
+    ]
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2",
+    "crumbs": [
+      "About"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Military Surplus",
+    "section": "",
+    "text": "This project looks at how much U.S. military surplus equipment has been transferred to law enforcement agencies. It uses data from from the “1033 program” handled through the Law Enforcement Support Office, which posts data quarterly.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#summary",
+    "href": "index.html#summary",
+    "title": "Military Surplus",
+    "section": "Summary",
+    "text": "Summary\nPolice departments across Central Texas, including Austin and San Marcos, have received millions of dollars in military-grade equipment since 2010, bringing surveillance tools, tactical robots and weapons accessories into local law enforcement.\nThe Austin Police Department alone received about $2.5 million in controlled equipment, including bomb disposal robots, surveillance robots and hundreds of weapon sights, illuminators and night vision devices. These tools expand the department’s ability to conduct tactical operations and surveillance using equipment originally designed for military use.\nSmaller nearby agencies have also received significant transfers. The San Marcos Police Department, which serves a population of about 63,000, received nearly $3.2 million in military equipment, showing how even mid-size departments can obtain large amounts of federal surplus.\nAcross Texas, law enforcement agencies have received 18,677 controlled items since 2010, reflecting the continued flow of military resources into local policing at both large and small departments.",
+    "crumbs": [
+      "Home"
+    ]
+  }
+]

@@ -1,0 +1,182 @@
+---
+title: "Texas Analysis"
+format: html
+---
+
+## Notebook goals
+
+Analyzing controlled military surplus equipment transferred to Texas law enforcement agencies since 2010, including total quantities, values, agency totals and specific items received.
+
+- How many total controlled items are in the hands of Texas agencies, and what are they all worth?
+- How many total controlled items does each agency have and how much is it all worth?
+- How many total controlled items do local agencies have and what is their total value?
+- What specific controlled items does each agency have and how much are they worth?
+- What controlled items did local agencies receive?
+
+## Setup
+
+Setting up and importing libraries
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(janitor)
+```
+
+## Import
+
+Importing the data into the project. 
+
+```{r}
+leso <- read_rds("data-processed/01-leso-clean.rds")
+
+leso |> glimpse()
+```
+
+## Controlled v. uncontrolled
+
+Counting how many items are classified as controlled versus uncontrolled.
+
+```{r}
+leso |> 
+  group_by(control_type) |> 
+  summarize(number_items = n())
+```
+
+## Grabbing controlled items
+
+Filtering to capture the controlled data for analysis.
+
+```{r}
+leso_c <- leso |> 
+  filter(control_type == TRUE)
+```
+
+## Texas controlled items
+
+Filtering the controlled items to include only Texas agencies.
+
+```{r}
+leso_c_tx <- leso_c |>
+  filter(state == "TX")
+
+leso_c_tx
+```
+
+## Total controlled items in Texas
+
+Summarizing the total quantity and total value of controlled equipment in Texas.
+
+```{r}
+leso_c_tx |>
+  summarize(
+    summed_quantity = sum(quantity),
+    summed_total_value = sum(total_value)
+  )
+```
+
+Data Takeaway: Texas law enforcement agencies have received 18,677 controlled military surplus items since 2010, with a combined value of about $125 million.
+
+## Totals by agency
+
+Summarizing the total quantity and total value of equipment received by each Texas agency.
+
+```{r}
+tx_agency_totals <- leso_c_tx |>
+  group_by(agency_name) |> 
+  summarize(
+    summed_quantity = sum(quantity),
+    summed_total_value = sum(total_value)
+  ) |> 
+  arrange(summed_total_value |> desc())
+
+tx_agency_totals
+```
+
+Data Takeaway: The Houston Police Department received the most military surplus equipment in Texas, totaling more than $6.9 million. While large agencies like Houston and Austin rank high as expected, smaller departments such as San Marcos and Milam County also appear near the top, standing out for receiving millions of dollars in equipment despite serving much smaller populations.
+
+## Local agency totals
+
+Filtering the agency totals to include only selected Central Texas law enforcement agencies.
+
+```{r}
+local_agencies <- c(
+  "AUSTIN PARKS POLICE DEPT", #NI
+  "AUSTIN POLICE DEPT",
+  "BASTROP COUNTY SHERIFF'S OFFICE",
+  "BASTROP POLICE DEPT",
+  "BEE CAVE POLICE DEPT",
+  "BUDA POLICE DEPT",
+  "CALDWELL COUNTY SHERIFFS OFFICE",
+  "CEDAR PARK POLICE DEPT",
+  "ELGIN POLICE DEPARTMENT",
+  "FLORENCE POLICE DEPT", #NI
+  "GEORGETOWN POLICE DEPT",
+  "GRANGER POLICE DEPT", #NI
+  "HAYS CO CONSTABLE PRECINCT 4",
+  "HAYS COUNTY SHERIFFS OFFICE",
+  "HUTTO POLICE DEPT",
+  "JARRELL POLICE DEPT", #NI
+  "JONESTOWN POLICE DEPT", #NI
+  "KYLE POLICE DEPT",
+  "LAGO VISTA POLICE DEPT",
+  "LAKEWAY POLICE DEPT",
+  "LEANDER POLICE DEPT",
+  "LIBERTY HILL POLICE DEPT", #NI
+  "LOCKHART POLICE DEPT",
+  "LULING POLICE DEPT",
+  "MANOR POLICE DEPT",
+  "MARTINDALE POLICE DEPT", #NI
+  "PFLUGERVILLE POLICE DEPT",
+  "ROLLINGWOOD POLICE DEPT", #NI
+  "SAN MARCOS POLICE DEPT",
+  "SMITHVILLE POLICE DEPT",
+  "SUNSET VALLEY POLICE DEPT", #NI
+  "TAYLOR POLICE DEPT", #NI
+  "THRALL POLICE DEPT", #NI
+  # TEXAS STATE UNIVERSITY HI_ED
+  "TRAVIS COUNTY SHERIFFS OFFICE",
+  # TRAVIS CONSTABLE OFFICE,
+  # SOUTHWESTERN UNIVERSITY HI_ID
+  "WESTLAKE HILLS POLICE DEPT", #NI
+  "UNIV OF TEXAS SYSTEM POLICE HI_ED",
+  "WILLIAMSON COUNTY SHERIFF'S OFFICE"
+)
+
+tx_agency_totals |>
+  filter(agency_name %in% local_agencies)
+```
+
+Among Central Texas agencies, the San Marcos Police Department received the most equipment, valued at nearly $3.2 million. The Austin Police Department follows with approximately $2.5 million. 
+
+## Items received by each agency
+
+Summarizing the total quantity and value of each specific item received by each agency.
+
+```{r}
+tx_agency_item_totals <- leso_c_tx |>
+  group_by(agency_name, item_name) |>
+  summarize(
+    summed_quantity = sum(quantity),
+    summed_total_value = sum(total_value)
+  ) |> 
+  arrange(desc(summed_total_value))
+
+tx_agency_item_totals
+```
+
+## Items received by local agencies
+
+Filtering the summarized item totals to show the specific controlled equipment received by local Central Texas agencies.
+
+```{r}
+tx_agency_item_totals |> 
+  filter(agency_name %in% local_agencies) |> 
+  arrange(agency_name, desc(summed_total_value))
+```
+
+Data Takeaway: The Austin Police Department received advanced tactical and surveillance equipment, including a helicopter flight trainer, four PackBot bomb robots and eight Recon Scout surveillance robots. The department also acquired large quantities of optical gear, including 394 reflex sights, 110 weapon illuminators and dozens of night vision devices.
+
